@@ -1,10 +1,11 @@
 import torch
 from torch.autograd import Variable
+import torch.nn.functional as f
 import cv2
 
-from yolo.utils.models import *
-from yolo.utils.utils import *
-from yolo.utils.datasets import *
+from yolo.util.models import *
+from yolo.util.utils import *
+from yolo.util.datasets import *
 
 
 class YOLOv3Predictor(object):
@@ -60,9 +61,9 @@ class YOLOv3Predictor(object):
         dim_diff = np.abs(h - w)
         pad1, pad2 = int(dim_diff // 2), int(dim_diff - dim_diff // 2)
         pad = (pad1, pad2, 0, 0) if w <= h else (0, 0, pad1, pad2)
-        x = F.pad(x, pad=pad, mode="constant", value=127.5) / 255.0
+        x = f.pad(x, pad=pad, mode="constant", value=127.5) / 255.0
         img_padded_size = x.shape[2]
-        x = F.interpolate(x, size=(ih, iw), mode="bilinear", align_corners=False)  # x = (1, 3, 416, 416)
+        x = f.interpolate(x, size=(ih, iw), mode="bilinear", align_corners=False)  # x = (1, 3, 416, 416)
         return x, pad, img_padded_size
 
     def orig_coords_to_yolo(self, pad, img_padded_size, coords):

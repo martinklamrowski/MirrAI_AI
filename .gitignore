@@ -11,7 +11,7 @@ df2predictor.py
 results-googel
 evaluate.py
 output
-gt_imgs
+old_labelled_images
 tests
 coco_json
 log_map.txt

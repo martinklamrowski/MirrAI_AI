@@ -2,7 +2,7 @@ import os
 import matplotlib.pyplot as plt
 import cv2
 
-from yolo.utils.utils import *
+from yolo.util.utils import *
 from predictors.YOLOv3 import YOLOv3Predictor
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")

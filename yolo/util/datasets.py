@@ -8,7 +8,7 @@ import torch.nn.functional as f
 from torch.utils.data import Dataset
 import torchvision.transforms as transforms
 
-from yolo.utils.augmentations import horisontal_flip
+from yolo.util.augmentations import horisontal_flip
 
 
 def pad_to_square(img, pad_value):

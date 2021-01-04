@@ -8,7 +8,7 @@ import torch.nn.functional as f
 from torch.utils.data import Dataset
 import torchvision.transforms as transforms
 
-from yolo.util.augmentations import horisontal_flip
+from utils.augmentations import horizontal_flip
 
 
 def pad_to_square(img, pad_value):
@@ -126,7 +126,7 @@ class ListDataset(Dataset):
         # Apply augmentations
         if self.augment:
             if np.random.random() < 0.5:
-                img, targets = horisontal_flip(img, targets)
+                img, targets = horizontal_flip(img, targets)
 
         return img_path, img, targets
 

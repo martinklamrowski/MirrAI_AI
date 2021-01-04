@@ -1,43 +1,21 @@
 import os
 import matplotlib.pyplot as plt
 import cv2
+import torch
+import numpy as np
 
-from yolo.util.utils import *
+from utils import *
 from predictors.YOLOv3 import YOLOv3Predictor
 
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 torch.cuda.empty_cache()
 
-# YOLO PARAMS
-yolo_df2_params = {"model_def": "yolo/df2cfg/yolov3-df2.cfg",
-                   "weights_path": "yolo/weights/yolov3-df2_15000.weights",
-                   "class_path": "yolo/df2cfg/df2.names",
-                   "conf_thres": 0.5,
-                   "nms_thres": 0.4,
-                   "img_size": 416,
-                   "device": device}
 
-yolo_modanet_params = {"model_def": "yolo/modanetcfg/yolov3-modanet.cfg",
-                       "weights_path": "yolo/weights/yolov3-modanet_last.weights",
-                       "class_path": "yolo/modanetcfg/modanet.names",
-                       "conf_thres": 0.5,
-                       "nms_thres": 0.4,
-                       "img_size": 416,
-                       "device": device}
+yolo_params = config.YOLO_MODA_PARAMS
+dataset = "MODA"
+classes = utils.load_classes(yolo_params["class_path"])
 
-# DATASET
-# yolo_params = yolo_df2_params
-# dataset = "df"
-yolo_params = yolo_modanet_params
-dataset = "moda"
-
-# Classes
-classes = load_classes(yolo_params["class_path"])
-
-# Colors
 cmap = plt.get_cmap("rainbow")
 colors = np.array([cmap(i) for i in np.linspace(0, 1, 13)])
-# np.random.shuffle(colors)
 
 model = YOLOv3Predictor(params=yolo_params)
 
@@ -87,6 +65,6 @@ while True:
 
     cv2.imshow("boundings", img_resized)
     img_id = path.split('/')[-1].split('.')[0]
-    cv2.imwrite("output/ouput-test_{}_yolov3_{}.jpg".format(img_id, model, dataset), img_resized)
+    cv2.imwrite("output/output-test_{}_yolov3_{}.jpg".format(img_id, model, dataset), img_resized)
     cv2.waitKey(0)
     # cv2.destroyAllWindows()

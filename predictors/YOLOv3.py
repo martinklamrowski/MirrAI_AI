@@ -1,11 +1,11 @@
 import torch
-from torch.autograd import Variable
 import torch.nn.functional as f
-import cv2
+from torch.autograd import Variable
 
-from yolo.util.models import *
-from yolo.util.utils import *
-from yolo.util.datasets import *
+import cv2
+import numpy as np
+
+from utils import *
 
 
 class YOLOv3Predictor(object):
@@ -27,12 +27,12 @@ class YOLOv3Predictor(object):
         x.to(self.params["device"])
         input_img = Variable(x.type(tensor))
         detections = self.model(input_img)
-        detections = non_max_suppression(detections, self.params["conf_thres"], self.params["nms_thres"])
+        detections = utils.non_max_suppression(detections, self.params["conf_thres"], self.params["nms_thres"])
 
         if detections[0] is not None:
             self.orig_detections = detections[0].clone()
             # detections_org = detections[0].clone()
-            detections = rescale_boxes(detections[0], self.params["img_size"], img.shape[:2])
+            detections = utils.rescale_boxes(detections[0], self.params["img_size"], img.shape[:2])
             # unique_labels = detections[:, -1].cpu().unique()
             # n_cls_preds = len(unique_labels)
             detections = detections.tolist()
@@ -43,11 +43,11 @@ class YOLOv3Predictor(object):
         return []
 
     def load_classes(self):
-        return load_classes(self.params)
+        return utils.load_classes(self.params)
 
     def load_model(self):
         # Set up model
-        model = Darknet(self.params["model_def"], img_size=self.params["img_size"]).to(self.params["device"])
+        model = models.Darknet(self.params["model_def"], img_size=self.params["img_size"]).to(self.params["device"])
         model.load_darknet_weights(self.params["weights_path"])
         model.eval()  # Set in evaluation mode
         return model

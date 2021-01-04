@@ -21,8 +21,11 @@ image = cv2.imread(image_path)
 detections = model.get_detections(image)
 print(detections)
 
+# TODO
 # send detections to firebase
 
+# TODO
 # wait to receive 4 images from firebase
 
+# TODO
 # save images from firebase to "recos" directory

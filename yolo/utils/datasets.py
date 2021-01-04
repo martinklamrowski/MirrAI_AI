@@ -1,15 +1,14 @@
 import glob
 import random
 import os
-import sys
 import numpy as np
 from PIL import Image
 import torch
-import torch.nn.functional as F
-
-#from yolo.utils.augmentations import horisontal_flip
+import torch.nn.functional as f
 from torch.utils.data import Dataset
 import torchvision.transforms as transforms
+
+from yolo.utils.augmentations import horisontal_flip
 
 
 def pad_to_square(img, pad_value):
@@ -20,19 +19,19 @@ def pad_to_square(img, pad_value):
     # Determine padding
     pad = (0, 0, pad1, pad2) if h <= w else (pad1, pad2, 0, 0)
     # Add padding
-    img = F.pad(img, pad, "constant", value=pad_value)
+    img = f.pad(img, pad, "constant", value=pad_value)
 
     return img, pad
 
 
 def resize(image, size):
-    image = F.interpolate(image.unsqueeze(0), size=size, mode="nearest").squeeze(0)
+    image = f.interpolate(image.unsqueeze(0), size=size, mode="nearest").squeeze(0)
     return image
 
 
 def random_resize(images, min_size=288, max_size=448):
     new_size = random.sample(list(range(min_size, max_size + 1, 32)), 1)[0]
-    images = F.interpolate(images, size=new_size, mode="nearest")
+    images = f.interpolate(images, size=new_size, mode="nearest")
     return images
 
 

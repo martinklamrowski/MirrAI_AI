@@ -4,7 +4,6 @@ from PIL import ImageDraw, Image
 
 
 def get_boxes_and_inputs_pb(frozen_graph):
-
     with frozen_graph.as_default():
         boxes = tf.get_default_graph().get_tensor_by_name("output_boxes:0")
         inputs = tf.get_default_graph().get_tensor_by_name("inputs:0")
@@ -12,13 +11,11 @@ def get_boxes_and_inputs_pb(frozen_graph):
     return boxes, inputs
 
 
-def get_boxes_and_inputs(model, num_classes, size, data_format):
-
-    inputs = tf.placeholder(tf.float32, [1, size, size, 3])
+def get_boxes_and_inputs(model, batch_size, num_classes, size, data_format):
+    inputs = tf.placeholder(tf.float32, [batch_size, size, size, 3])
 
     with tf.variable_scope("detector"):
-        detections = model(inputs, num_classes,
-                           data_format=data_format)
+        detections = model(inputs, num_classes, data_format=data_format)
 
     boxes = detections_boxes(detections)
 
@@ -26,7 +23,6 @@ def get_boxes_and_inputs(model, num_classes, size, data_format):
 
 
 def load_graph(frozen_graph_filename):
-
     with tf.gfile.GFile(frozen_graph_filename, "rb") as f:
         graph_def = tf.GraphDef()
         graph_def.ParseFromString(f.read())
@@ -38,7 +34,6 @@ def load_graph(frozen_graph_filename):
 
 
 def freeze_graph(sess, output_graph):
-
     output_node_names = [
         "output_boxes",
         "inputs",
@@ -55,6 +50,28 @@ def freeze_graph(sess, output_graph):
         f.write(output_graph_def.SerializeToString())
 
     print("{} ops written to {}.".format(len(output_graph_def.node), output_graph))
+
+
+def load_images(image_names, model_size):
+    """
+    Loads images in a 4D array.
+
+    :param image_names: A list of images names.
+    :param model_size: The input size of the model.
+    :return: 4D NumPy array of images
+    """
+    images = []
+
+    for name in image_names:
+        img = Image.open(name)
+        img = letter_box_image(img, model_size, model_size, 128)
+        img = img.astype(np.float32)
+        img = np.expand_dims(img, axis=0)
+        images.append(img)
+
+    images = np.concatenate(images)
+
+    return images
 
 
 def load_weights(var_list, weights_file):
@@ -97,8 +114,7 @@ def load_weights(var_list, weights_file):
                 bias = var2
                 bias_shape = bias.shape.as_list()
                 bias_params = np.prod(bias_shape)
-                bias_weights = weights[ptr:ptr +
-                                       bias_params].reshape(bias_shape)
+                bias_weights = weights[ptr:ptr + bias_params].reshape(bias_shape)
                 ptr += bias_params
                 assign_ops.append(
                     tf.assign(bias, bias_weights, validate_shape=True))
@@ -217,14 +233,13 @@ def non_max_suppression(predictions_with_boxes, confidence_threshold, iou_thresh
 def load_class_names(file_name):
     names = {}
     with open(file_name) as f:
-        for id, name in enumerate(f):
-            names[id] = name
+        for i, name in enumerate(f):
+            names[i] = name
     return names
 
 
 def draw_boxes(boxes, img, cls_names, detection_size, is_letter_box_image):
     draw = ImageDraw.Draw(img)
-    print(img)
 
     for cls, bboxs in boxes.items():
         color = tuple(np.random.randint(0, 256, 3))
@@ -235,8 +250,6 @@ def draw_boxes(boxes, img, cls_names, detection_size, is_letter_box_image):
             draw.rectangle(box, outline=color)
             draw.text(box[:2], "{} {:.2f}%".format(
                 cls_names[cls], score * 100), fill=color)
-
-    # draw.save("res/output/" + img)
 
 
 def convert_to_original_size(box, size, original_size, is_letter_box_image):
@@ -250,7 +263,7 @@ def convert_to_original_size(box, size, original_size, is_letter_box_image):
     return list(box.reshape(-1))
 
 
-def letter_box_image(image: Image.Image, output_height: int, output_width: int, fill_value)-> np.ndarray:
+def letter_box_image(image: Image.Image, output_height: int, output_width: int, fill_value) -> np.ndarray:
     """
     Fit image with final image with output_width and output_height.
     :param image: PILLOW Image object.
@@ -260,8 +273,8 @@ def letter_box_image(image: Image.Image, output_height: int, output_width: int, 
     :return: numpy image fit within letterbox. dtype=uint8, shape=(output_height, output_width)
     """
 
-    height_ratio = float(output_height)/image.size[1]
-    width_ratio = float(output_width)/image.size[0]
+    height_ratio = float(output_height) / image.size[1]
+    width_ratio = float(output_width) / image.size[0]
     fit_ratio = min(width_ratio, height_ratio)
     fit_height = int(image.size[1] * fit_ratio)
     fit_width = int(image.size[0] * fit_ratio)
@@ -273,11 +286,11 @@ def letter_box_image(image: Image.Image, output_height: int, output_width: int, 
     to_return = np.tile(fill_value, (output_height, output_width, 1))
     pad_top = int(0.5 * (output_height - fit_height))
     pad_left = int(0.5 * (output_width - fit_width))
-    to_return[pad_top:pad_top+fit_height, pad_left:pad_left+fit_width] = fit_image
+    to_return[pad_top:pad_top + fit_height, pad_left:pad_left + fit_width] = fit_image
     return to_return
 
 
-def letter_box_pos_to_original_pos(letter_pos, current_size, ori_image_size)-> np.ndarray:
+def letter_box_pos_to_original_pos(letter_pos, current_size, ori_image_size) -> np.ndarray:
     """
     Parameters should have same shape and dimension space. (Width, Height) or (Height, Width)
     :param letter_pos: The current position within letterbox image including fill value area.
@@ -288,7 +301,7 @@ def letter_box_pos_to_original_pos(letter_pos, current_size, ori_image_size)-> n
     letter_pos = np.asarray(letter_pos, dtype=np.float)
     current_size = np.asarray(current_size, dtype=np.float)
     ori_image_size = np.asarray(ori_image_size, dtype=np.float)
-    final_ratio = min(current_size[0]/ori_image_size[0], current_size[1]/ori_image_size[1])
+    final_ratio = min(current_size[0] / ori_image_size[0], current_size[1] / ori_image_size[1])
     pad = 0.5 * (current_size - final_ratio * ori_image_size)
     pad = pad.astype(np.int32)
     to_return_pos = (letter_pos - pad) / final_ratio

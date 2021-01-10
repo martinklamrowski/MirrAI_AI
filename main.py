@@ -2,6 +2,7 @@ import numpy as np
 import tensorflow as tf
 from PIL import Image
 import time
+import glob
 
 import yolo.yolo_v3
 import yolo.yolo_v3_tiny
@@ -17,9 +18,9 @@ def main(argv=None):
         log_device_placement=False,
     )
 
-    img = Image.open(config.INPUT_IMAGE)
-    img_resized = util.letter_box_image(img, config.MODEL_SIZE, config.MODEL_SIZE, 128)
-    img_resized = img_resized.astype(np.float32)
+    image_paths = glob.glob(config.IMAGES_DIR + "*.jpg")
+
+    input_images = util.load_images(image_paths, config.MODEL_SIZE)
     classes = util.load_class_names(config.CLASSES_FILE)
 
     if config.TINY:
@@ -29,29 +30,45 @@ def main(argv=None):
     else:
         model = yolo.yolo_v3.yolo_v3
 
-    boxes, inputs = util.get_boxes_and_inputs(model, len(classes), config.MODEL_SIZE, config.DATA_FORMAT)
+    boxes, inputs = util.get_boxes_and_inputs(model, len(input_images),
+                                              len(classes), config.MODEL_SIZE, config.DATA_FORMAT)
 
     saver = tf.train.Saver(var_list=tf.global_variables(scope="detector"))
-
+    input_dict = {inputs: input_images}
     with tf.Session(config=conf) as sess:
         t0 = time.time()
         saver.restore(sess, config.CHECKPOINT_FILE)
         print("Model restored in {:.2f}s".format(time.time() - t0))
 
         t0 = time.time()
-        detected_boxes = sess.run(boxes, feed_dict={inputs: [img_resized]})
+
+        detected_boxes = sess.run(boxes, feed_dict=input_dict)
+        print("Predictions found in {:.2f}s".format(time.time() - t0))
 
     filtered_boxes = util.non_max_suppression(detected_boxes,
                                               confidence_threshold=config.CONF_THRESHOLD,
                                               iou_threshold=config.IOU_THRESHOLD)
 
-    print("Predictions found in {:.2f}s".format(time.time() - t0))
+    # print(filtered_boxes)
+    print("~~~~~~~~~~~~~~~~~~~~~~~~")
+    # for key in filtered_boxes:
+    #     print(key, " : ", filtered_boxes[key])
 
-    util.draw_boxes(filtered_boxes, img, classes, (config.MODEL_SIZE, config.MODEL_SIZE), True)
+    print(input_dict)
 
-    print(img.filename)
+    print(len(filtered_boxes))
 
-    img.save(config.OUTPUT_DIR + img.filename.split("/")[2])
+    # for i in range(len(input_images)):
+    #     box = filtered_boxes[i]
+    #     image_name = image_paths[i].split("/")[2]
+    #     image = input_images[i]
+    #
+    #     util.draw_boxes(box, image, classes, (config.MODEL_SIZE, config.MODEL_SIZE), True)
+    #
+    #     image.save(config.OUTPUT_DIR + image_name)
+    # #
+    # # print(img.filename)
+    # #
 
 
 if __name__ == "__main__":

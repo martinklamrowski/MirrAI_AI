@@ -61,7 +61,7 @@ def _darknet53_block(inputs, filters):
     return inputs
 
 
-def _spp_block(inputs, data_format="NCHW"):
+def _spp_block(inputs, data_format="NHWC"):
     return tf.concat([slim.max_pool2d(inputs, 13, 1, "SAME"),
                       slim.max_pool2d(inputs, 9, 1, "SAME"),
                       slim.max_pool2d(inputs, 5, 1, "SAME"),
@@ -99,7 +99,7 @@ def _fixed_padding(inputs, kernel_size, *args, mode="CONSTANT", **kwargs):
     return padded_inputs
 
 
-def _yolo_block(inputs, filters, data_format="NCHW", with_spp=False):
+def _yolo_block(inputs, filters, data_format="NHWC", with_spp=False):
     inputs = _conv2d_fixed_padding(inputs, filters, 1)
     inputs = _conv2d_fixed_padding(inputs, filters * 2, 3)
     inputs = _conv2d_fixed_padding(inputs, filters, 1)
@@ -174,7 +174,7 @@ def _detection_layer(inputs, num_classes, anchors, img_size, data_format):
     return predictions
 
 
-def _upsample(inputs, out_shape, data_format="NCHW"):
+def _upsample(inputs, out_shape, data_format="NHWC"):
     # tf.image.resize_nearest_neighbor accepts input in format NHWC
     if data_format == "NCHW":
         inputs = tf.transpose(inputs, [0, 2, 3, 1])
@@ -196,7 +196,7 @@ def _upsample(inputs, out_shape, data_format="NCHW"):
     return inputs
 
 
-def yolo_v3(inputs, num_classes, is_training=False, data_format="NCHW", reuse=False, with_spp=False):
+def yolo_v3(inputs, num_classes, is_training=False, data_format="NHWC", reuse=False, with_spp=False):
     """
     Creates YOLO v3 model.
     :param inputs: a 4-D tensor of size [batch_size, height, width, channels].
@@ -246,8 +246,7 @@ def yolo_v3(inputs, num_classes, is_training=False, data_format="NCHW", reuse=Fa
                 inputs = _conv2d_fixed_padding(route, 256, 1)
                 upsample_size = route_2.get_shape().as_list()
                 inputs = _upsample(inputs, upsample_size, data_format)
-                inputs = tf.concat([inputs, route_2],
-                                   axis=1 if data_format == "NCHW" else 3)
+                inputs = tf.concat([inputs, route_2], axis=1 if data_format == "NCHW" else 3)
 
                 route, inputs = _yolo_block(inputs, 256)
 
@@ -272,7 +271,7 @@ def yolo_v3(inputs, num_classes, is_training=False, data_format="NCHW", reuse=Fa
                 return detections
 
 
-def yolo_v3_spp(inputs, num_classes, is_training=False, data_format="NCHW", reuse=False):
+def yolo_v3_spp(inputs, num_classes, is_training=False, data_format="NHWC", reuse=False):
     """
     Creates YOLO v3 with SPP  model.
     :param inputs: a 4-D tensor of size [batch_size, height, width, channels].

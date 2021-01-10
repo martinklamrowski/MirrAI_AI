@@ -1,6 +1,7 @@
 .git
 .idea
 *.weights
+*.tflite
 *.pb
 res/**/checkpoints/
 __pycache__

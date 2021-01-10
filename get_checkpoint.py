@@ -2,7 +2,7 @@ import tensorflow as tf
 
 import yolo.yolo_v3
 import yolo.yolo_v3_tiny
-import util.config as config
+from util import config
 from util import util
 
 

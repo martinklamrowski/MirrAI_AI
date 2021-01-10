@@ -7,6 +7,7 @@ SPP = False
 CONF_THRESHOLD = 0.5
 IOU_THRESHOLD = 0.5
 CHECKPOINT_FILE = "res/checkpoints/model.ckpt"
+PB_FILE = "res/yolo_v3.pb"
 WEIGHTS_FILE = "res/yolo_v3.weights"
 TINY = False
 INPUT_IMAGE = "res/images/1b4f01aa79d530af83ca824402d6bdc4.jpg"

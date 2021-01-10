@@ -1,6 +1,7 @@
 .git
 .idea
 *.weights
+*.pb
 res/**/checkpoints/
 __pycache__
 .vscode

@@ -3,6 +3,8 @@
 *.weights
 *.tflite
 *.pb
+*.sqlite3
+photos.lmdb
 res/**/checkpoints/
 __pycache__
 .vscode

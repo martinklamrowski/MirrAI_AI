@@ -31,7 +31,6 @@ def main(argv=None):
     image_path = cam.get_capture()
 
     # make detections
-    # image = cv2.imread(image_path)
     input_image = util.load_images(image_path, config.MODEL_SIZE)
 
     classes = util.load_class_names(config.CLASSES_FILE)

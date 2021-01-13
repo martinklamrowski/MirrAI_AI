@@ -20,9 +20,30 @@ $ sudo pip3 install tensorflow-1.15.0-cp37-cp37m-linux_armv7l.whl
 【Required】 Restart the terminal.
 ```
 
-### cv2
+### cv2:
 ```bash
 $ sudo apt-get install libjpeg-dev libtiff5-dev libjasper-dev libpng12-dev libavcodec-dev libavformat-dev \
                        libswscale-dev libv4l-dev libxvidcore-dev libx264-dev qt4-dev-tools libatlas-base-dev
 ```
+***
+## Clone the repo:
+```bash
+$ git clone https://github.com/martinklamrowski/MirrAI_AI.git
+```
+### -(for RPi4 deployment)
+If you're cloning to deploy on RPi4, you only need the following files/dirs:
+ - camera_capture.py, pi_script.py, res/util, res/yolo, res/checkpoints (empty for now), res/modanet.names
+
+To download checkpoint (pi_script.py uses the checkpoint, not the weights):
+ - Will host it somewhere eventually.
+
+### -(for raising your blood pressure)
+If you're cloning to train, tweak, etc. keep everything.
+
+To download chictopia and modanet >>> eeeeeeeeeyyyyyyah.
+
+To download model weights:
+ - Will host them somewhere eventually.
+
+To get .tflite or .pb files from weights, run the requisite script.
 

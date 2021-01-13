@@ -8,5 +8,9 @@ photos.lmdb
 res/**/checkpoints/
 __pycache__
 .vscode
+<<<<<<< HEAD
+*.json
+=======
 /*.json
+>>>>>>> 9dcaeeaedd7fa65b2685a2363d83b23a75d9300d
 

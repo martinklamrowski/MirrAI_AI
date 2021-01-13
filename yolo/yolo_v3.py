@@ -5,7 +5,11 @@ slim = tf.contrib.slim
 
 _BATCH_NORM_DECAY = 0.9
 _BATCH_NORM_EPSILON = 1e-05
+<<<<<<< HEAD
+_RELU = 0.1
+=======
 _LEAKY_RELU = 0.1
+>>>>>>> 9dcaeeaedd7fa65b2685a2363d83b23a75d9300d
 
 _ANCHORS = [(10, 13), (16, 30), (33, 23),
             (30, 61), (62, 45), (59, 119),
@@ -232,7 +236,11 @@ def yolo_v3(inputs, num_classes, is_training=False, data_format="NHWC", reuse=Fa
         with slim.arg_scope([slim.conv2d], normalizer_fn=slim.batch_norm,
                             normalizer_params=batch_norm_params,
                             biases_initializer=None,
+<<<<<<< HEAD
+                            activation_fn=lambda x: tf.nn.relu(x)):
+=======
                             activation_fn=lambda x: tf.nn.leaky_relu(x, alpha=_LEAKY_RELU)):
+>>>>>>> 9dcaeeaedd7fa65b2685a2363d83b23a75d9300d
             with tf.variable_scope("darknet-53"):
                 route_1, route_2, inputs = darknet53(inputs)
 

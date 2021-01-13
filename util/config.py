@@ -4,6 +4,10 @@ DATA_FORMAT = "NHWC"
 OUTPUT_DIR = "res/output/"
 TEST_IMAGES_DIR = "res/test_images/"
 CHICTOPIA_DIR = "res/datasets/chictopia/"
+<<<<<<< HEAD
+MODANET_DIR = "res/datasets/modanet/"
+=======
+>>>>>>> 9dcaeeaedd7fa65b2685a2363d83b23a75d9300d
 GPU_MEMORY_FRACTION = 1.0
 SPP = False
 CONF_THRESHOLD = 0.5
@@ -12,6 +16,10 @@ CHECKPOINT_FILE = "res/checkpoints/model.ckpt"
 PB_FILE = "res/yolo_v3.pb"
 WEIGHTS_FILE = "res/yolo_v3.weights"
 TFLITE_FILE = "res/yolo_v3.tflite"
+<<<<<<< HEAD
+EDGETPU_FILE = "res/yolo_v3_quantized.tflite"
+=======
+>>>>>>> 9dcaeeaedd7fa65b2685a2363d83b23a75d9300d
 TINY = False
 
 

@@ -1,5 +1,4 @@
 import tensorflow as tf
-<<<<<<< HEAD
 import numpy as np
 import os
 
@@ -36,15 +35,6 @@ from util import config
 def representative_data_gen():
     for _ in range(250):
         yield [np.random.uniform(0.0, 1.0, size=(1, 416, 416, 3)).astype(np.float32)]
-=======
-
-from util import config
-
-
-def representative_data_gen():
-    for input_value in tf.data.Dataset.from_tensor_slices(train_images).batch(1).take(100):
-        yield [input_value]
->>>>>>> 9dcaeeaedd7fa65b2685a2363d83b23a75d9300d
 
 
 converter = tf.compat.v1.lite.TFLiteConverter.from_frozen_graph(
@@ -61,17 +51,9 @@ converter.target_spec.supported_ops = [tf.lite.OpsSet.TFLITE_BUILTINS_INT8]
 # Set the input and output tensors to uint8 (APIs added in r2.3)
 converter.inference_input_type = tf.uint8
 converter.inference_output_type = tf.uint8
-<<<<<<< HEAD
 converter.experimental_new_converter = False
 
 tflite_model_quant = converter.convert()
 
 with open(config.EDGETPU_FILE, "wb") as f:
     f.write(tflite_model_quant)
-=======
-
-tflite_model_quant = converter.convert()
-
-with open(config.TFLITE_FILE, "wb") as f:
-    f.write(tflite_model)
->>>>>>> 9dcaeeaedd7fa65b2685a2363d83b23a75d9300d

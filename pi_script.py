@@ -25,22 +25,10 @@ def main(argv=None):
     )
 
     # image_paths = glob.glob(config.IMAGES_DIR + "*.jpg")
-
-<<<<<<< HEAD
     # input_images = util.load_images(image_paths, config.MODEL_SIZE)
 
     # get capture
     image_path = cam.get_capture()
-=======
-# # Firebase connection
-# cred = credentials.Certificate(r"/Users/angie/Downloads/Firebase_Connection/smartmirrai-c2051-firebase-adminsdk-pnq5k-19437db28a.json")
-# # Access Firebase DB
-# firebase_admin.initialize_app(cred, {'databaseURL': 'https://smartmirrai-c2051-default-rtdb.firebaseio.com/'})
-
-# Fetch and print firebase DB
-# ref = db.reference('images')
-# print(ref.get())
->>>>>>> 9dcaeeaedd7fa65b2685a2363d83b23a75d9300d
 
     # make detections
     # image = cv2.imread(image_path)
@@ -48,7 +36,6 @@ def main(argv=None):
 
     classes = util.load_class_names(config.CLASSES_FILE)
 
-<<<<<<< HEAD
     if config.TINY:
         model = yolo.yolo_v3_tiny.yolo_v3_tiny
     elif config.SPP:
@@ -120,10 +107,3 @@ def main(argv=None):
 
 if __name__ == "__main__":
     tf.app.run()
-=======
-
-
-
-# TODO
-# save images from firebase to "recos" directory
->>>>>>> 9dcaeeaedd7fa65b2685a2363d83b23a75d9300d

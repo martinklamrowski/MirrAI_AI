@@ -24,18 +24,16 @@ print(photos.head())
 p_data = PhotoData("{}photos.lmdb".format(config.CHICTOPIA_DIR))
 print(len(p_data))
 
-<<<<<<< HEAD
 for i in range(100):
     photo = photos.iloc[i]
     print(photo.id)
     print(photo.url)
     p_data[photo.id].save(config.TEST_IMAGES_DIR + photo.url.rsplit("/", 1)[-1])
     # time.sleep(10)
-=======
+
 for i in range(10):
     photo = photos.iloc[i]
     print(photo.id)
     print(photo.url)
     p_data[photo.id].show()
     time.sleep(10)
->>>>>>> 9dcaeeaedd7fa65b2685a2363d83b23a75d9300d

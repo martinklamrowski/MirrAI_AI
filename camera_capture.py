@@ -1,11 +1,15 @@
-import cv2
+from picamera import PiCamera
+import time
+
 import util.config as config
 
 
 def get_capture():
-    camera = cv2.VideoCapture(0)
 
-    ret, image = camera.read()
-    cv2.imwrite(config.OUTPUT_DIR + "selfie.png", image)
+    cam = PiCamera()
+    cam.resolution = (1080, 1920)
+    time.sleep(0.5)
 
-    return config.OUTPUT_DIR + "selfie.png"
+    cam.capture(config.OUTPUT_DIR + "selfie.jpg")
+
+    return config.OUTPUT_DIR + "selfie.jpg"

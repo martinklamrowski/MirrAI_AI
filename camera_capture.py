@@ -1,11 +1,11 @@
 import cv2
-import utils.config as config
+import util.config as config
 
 
 def get_capture():
-    camera = cv2.VideoCapture(config.DEVICE_ID)
+    camera = cv2.VideoCapture(0)
 
     ret, image = camera.read()
-    cv2.imwrite(config.PATH + "selfie.png", image)
+    cv2.imwrite(config.OUTPUT_DIR + "selfie.png", image)
 
-    return config.PATH + "selfie.png"
+    return config.OUTPUT_DIR + "selfie.png"

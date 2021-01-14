@@ -15,5 +15,3 @@ WEIGHTS_FILE = "res/yolo_v3.weights"
 TFLITE_FILE = "res/yolo_v3.tflite"
 EDGETPU_FILE = "res/yolo_v3_quantized.tflite"
 TINY = False
-
-

@@ -24,6 +24,7 @@ $ sudo pip3 install tensorflow-1.15.0-cp37-cp37m-linux_armv7l.whl
 ```bash
 $ sudo apt-get install libjpeg-dev libtiff5-dev libjasper-dev libpng12-dev libavcodec-dev libavformat-dev \
                        libswscale-dev libv4l-dev libxvidcore-dev libx264-dev qt4-dev-tools libatlas-base-dev
+$ sudo pip3 install opencv-python==3.4.6.27
 ```
 ***
 ## Clone the repo:

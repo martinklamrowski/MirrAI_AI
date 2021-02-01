@@ -6,6 +6,7 @@
 *.sqlite3
 photos.lmdb
 res/**/checkpoints/
+res/**/datasets/
 __pycache__
 .vscode
 <<<<<<< HEAD

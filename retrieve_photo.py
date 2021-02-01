@@ -24,16 +24,20 @@ print(photos.head())
 p_data = PhotoData("{}photos.lmdb".format(config.CHICTOPIA_DIR))
 print(len(p_data))
 
-for i in range(100):
+# first batch is the first 500 images
+batch = "batch5/"
+batch_num = 5
+
+for i in range(2000, 2500):
     photo = photos.iloc[i]
     print(photo.id)
     print(photo.url)
-    p_data[photo.id].save(config.TEST_IMAGES_DIR + photo.url.rsplit("/", 1)[-1])
+    p_data[photo.id].save(config.STYLESENSE_DIR + "images/" + batch + photo.url.rsplit("/", 1)[-1])
     # time.sleep(10)
 
-for i in range(10):
-    photo = photos.iloc[i]
-    print(photo.id)
-    print(photo.url)
-    p_data[photo.id].show()
-    time.sleep(10)
+# for i in range(10):
+#     photo = photos.iloc[i]
+#     print(photo.id)
+#     print(photo.url)
+#     p_data[photo.id].show()
+#     time.sleep(10)

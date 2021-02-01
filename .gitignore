@@ -3,13 +3,13 @@
 *.weights
 *.tflite
 *.pb
-*.sqlite3
-photos.lmdb
 res/**/checkpoints/
-res/**/datasets/
+res/**/**/chictopia/
+res/**/**/modanet/
+res/**/**/stylesense/annotations/
+res/**/**/stylesense/data/
+res/**/**/stylesense/images/
+res/**/test_images/
 __pycache__
 .vscode
-<<<<<<< HEAD
 *.json
-=======
-/*.json

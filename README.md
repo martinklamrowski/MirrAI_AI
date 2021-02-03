@@ -33,7 +33,7 @@ $ git clone https://github.com/martinklamrowski/MirrAI_AI.git
 ```
 ### -(for RPi4 deployment)
 If you're cloning to deploy on RPi4, you only need the following files/dirs:
- - camera_capture.py, pi_script.py, res/util, res/yolo, res/checkpoints (empty for now), res/modanet.names
+ - camera_capture.py, pi_script.py, res/util, res/yolo, res/checkpoints (empty for now), res/modanet.names.
 
 To download checkpoint (pi_script.py uses the checkpoint, not the weights):
  - Will host it somewhere eventually.

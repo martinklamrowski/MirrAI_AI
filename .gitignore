@@ -7,10 +7,11 @@ res/**/checkpoints/
 res/**/**/chictopia/
 res/**/**/modanet/
 res/**/**/stylesense/annotations/
-res/**/**/stylesense/backup/
-res/**/**/stylesense/data/
-res/**/**/stylesense/images/
+res/**/**/stylesense/my_backup/
+res/**/**/stylesense/data/images/
+res/**/**/stylesense/batches/
 res/**/test_images/
 __pycache__
 .vscode
 *.json
+*.zip

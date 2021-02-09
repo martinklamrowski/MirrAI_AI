@@ -48,6 +48,7 @@ def main(argv=None):
 
     saver = tf.train.Saver(var_list=tf.global_variables(scope="detector"))
     input_dict = {inputs: input_image}
+
     with tf.Session(config=conf) as sess:
         t0 = time.time()
         saver.restore(sess, config.CHECKPOINT_FILE)

@@ -23,7 +23,7 @@ def main(argv=None):
         with tf.variable_scope("detector"):
             detections = model(inputs, len(classes), data_format=config.DATA_FORMAT)
             load_ops = util.load_weights(tf.global_variables(scope="detector"),
-                                         config.WEIGHTS_FILE)
+                                         config.PI_WEIGHTS_FILE)
 
         boxes = util.detections_boxes(detections)
 

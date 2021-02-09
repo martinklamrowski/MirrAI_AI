@@ -1,5 +1,7 @@
 import glob
 import os
+import json
+from tqdm import tqdm
 
 import fiftyone as fo
 import fiftyone.core.utils as fou
@@ -11,14 +13,42 @@ import numpy as np
 
 from util import config
 
+SS_16_TO_10_MAP = {
+    "0": "0", "1": "1", "2": "6", "3": "8", "4": "8", "5": "3", "6": "4",
+    "7": "5", "8": "6", "9": "2", "10": "7", "11": "3", "12": "4", "13": "9",
+    "14": "2", "15": "6"
+}
+
 # arrange data in yolo format ish
-with open(config.STYLESENSE_DIR + "data/images.txt", "w") as file:
-    for name in glob.glob(config.STYLESENSE_DIR + "data/images/*.jpg"):
+# with open(config.STYLESENSE_DIR + "data/images.txt", "w") as file:
+#     for name in glob.glob(config.STYLESENSE_DIR + "data/images/*.jpg"):
+#
+#         name = os.path.split(name)[1]
+#         file.write("data/images/" + name + "\n")
 
-        name = os.path.split(name)[1]
-        file.write("data/images/" + name + "\n")
 
+# stealing modanet annotations
+# moda_json_files = glob.glob(config.MODANET_DIR + "data/*.json")
+#
+# for json_file in tqdm(moda_json_files):
+#     with open(json_file) as data_file:
+#         moda_data = json.load(data_file)
+#         # for item in moda_data.values():
+#         #     print(item)
 
+# convert existing stylesense_16 annotations to stylesense_10
+for an_file in glob.glob(config.STYLESENSE_DIR + "data/images/*.txt"):
+    with open(an_file, "r") as data_file:
+        contents = [line.split(" ") for line in data_file.readlines()]
+        for entry in contents:
+            entry[0] = SS_16_TO_10_MAP[entry[0]]
+
+    with open(an_file, "w") as data_file:
+        for entry in contents:
+            data_file.write(" ".join(entry))
+
+    print(contents)
+    print("FUCKYOU")
 
 
 

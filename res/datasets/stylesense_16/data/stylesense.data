@@ -1,5 +1,0 @@
-classes  = 16
-train    = /mydrive/yolov4/train.txt
-valid    = /mydrive/yolov4/val.txt
-names    = /mydrive/yolov4/stylesense.names
-backup   = /mydrive/yolov4

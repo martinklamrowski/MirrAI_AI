@@ -4,6 +4,3 @@ __pycache__
 .idea
 *.json
 *.zip
-*.weights
-*.tflite
-*.pb

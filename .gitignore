@@ -2,15 +2,6 @@
 __pycache__
 .vscode
 .idea
-res/**/checkpoints/
-res/**/**/chictopia/
-#res/**/**/modanet/
-res/**/**/stylesense_16/data/images/
-res/**/**/stylesense/annotations/
-res/**/**/stylesense/my_backup/
-res/**/**/stylesense/data/images/
-res/**/**/stylesense/batches/
-res/**/test_images/
 *.json
 *.zip
 *.weights

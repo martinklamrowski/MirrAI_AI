@@ -1,0 +1,76 @@
+import time
+import cv2
+
+import picamera
+from picamera.array import PiRGBArray
+
+from pycoral.adapters.common import set_resized_input
+from pycoral.adapters.detect import get_objects
+from pycoral.utils.dataset import read_label_file
+from pycoral.utils.edgetpu import make_interpreter, run_inference
+
+
+def main():
+    cam_w, cam_h = 640, 480
+    default_model = "data/ssd_mobilenet_v2_coco_quant_postprocess_edgetpu.tflite"
+    default_labels = "data/coco_labels.txt"
+
+    with picamera.PiCamera() as camera:
+
+        interpreter = make_interpreter(default_model)
+        interpreter.allocate_tensors()
+        labels = read_label_file(default_labels)
+
+        camera.resolution = (cam_w, cam_h)
+        camera.framerate = 30
+        raw_capture = PiRGBArray(camera)
+
+        # allow the camera to warmup
+        time.sleep(0.1)
+
+        try:
+            for frame in camera.capture_continuous(
+                    raw_capture, format="rgb", use_video_port=True
+            ):
+                start_ms = time.time()
+
+                raw_capture.truncate(0)
+                image = frame.array
+
+                _, scale = set_resized_input(
+                    interpreter,
+                    (cam_w, cam_h),
+                    lambda size: cv2.resize(image, size),
+                )
+                interpreter.invoke()
+
+                # get detections
+                objects = get_objects(interpreter, 0.5, scale)
+
+                for obj in objects:
+                    if labels and obj.id in labels:
+                        label_name = labels[obj.id]
+                        caption = "{0}({1:.2f})".format(label_name, obj.score)
+
+                        # Draw a rectangle and caption.
+                        bbox = (
+                            obj.bbox.xmin,
+                            obj.bbox.ymin,
+                            obj.bbox.xmax,
+                            obj.bbox.ymax,
+                        )
+                        print("{} - BBox: {}".format(caption, bbox))
+
+                # fps ish
+                elapsed_ms = time.time() - start_ms
+                fps = 1 / elapsed_ms
+                fps_text = "{0:.2f}ms, {1:.2f}fps".format((elapsed_ms * 1000.0), fps)
+                print(fps_text)
+
+        finally:
+            # camera.stop_preview()
+            pass
+
+
+if __name__ == "__main__":
+    main()

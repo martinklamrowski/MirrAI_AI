@@ -23,7 +23,7 @@ def main():
         labels = read_label_file(default_labels)
 
         camera.resolution = (cam_w, cam_h)
-        camera.framerate = 30
+        camera.framerate = 10
         raw_capture = PiRGBArray(camera)
 
         # allow the camera to warmup
@@ -54,7 +54,7 @@ def main():
                     if labels and obj.id in labels:
                         label_name = labels[obj.id]
                         detections.add(label_name)
-                        caption = "{0}({1:.2f})".format(label_name, obj.score)
+                        # caption = "{0}({1:.2f})".format(label_name, obj.score)
 
                         # bbox = (
                         #     obj.bbox.xmin,
@@ -66,8 +66,12 @@ def main():
                         # print("{} - BBox: {}".format(caption, bbox))
                         # print("{}".format(caption))
                     # print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-                for d in detections:
-                    print(d, end=" ")
+                print("I see a: ")
+                if not len(detections):
+                    print("nothing :(")
+                else:
+                    for d in detections:
+                        print(d, end=" ")
                 # fps ish
                 # elapsed_ms = time.time() - start_ms
                 # fps = 1 / elapsed_ms

@@ -66,12 +66,13 @@ def main():
                         # print("{} - BBox: {}".format(caption, bbox))
                         # print("{}".format(caption))
                     # print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-                print("I see a: ")
-                if not len(detections):
-                    print("nothing :(")
+                if len(detections) == 0:
+                    print("I see a: nothing :(")
                 else:
+                    output = "I see a: "
                     for d in detections:
-                        print(d, end=" ")
+                        output += d
+                    print(output)
                 # fps ish
                 # elapsed_ms = time.time() - start_ms
                 # fps = 1 / elapsed_ms

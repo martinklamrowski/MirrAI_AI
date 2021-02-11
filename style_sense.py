@@ -13,8 +13,8 @@ from pycoral.utils.edgetpu import make_interpreter, run_inference
 
 def main():
     cam_w, cam_h = 640, 480
-    default_model = "data/ssd_mobilenet_v2_coco_quant_postprocess_edgetpu.tflite"
-    default_labels = "data/coco_labels.txt"
+    default_model = "../stylesense/data/ssd_mobilenet_v2_coco_quant_postprocess_edgetpu.tflite"
+    default_labels = "../stylesense/data/coco_labels.txt"
 
     with picamera.PiCamera() as camera:
 
@@ -80,9 +80,9 @@ def main():
                 # fps_text = "{0:.2f}ms, {1:.2f}fps".format((elapsed_ms * 1000.0), fps)
                 # print(fps_text)
 
-                with open("detections.tmp", "w") as detections_file:
+                with open("../stylesense/detections.tmp", "w") as detections_file:
                     detections_file.write(output)
-                os.rename("detections.tmp", "detections.txt")
+                os.rename("../stylesense/detections.tmp", "../stylesense/detections.txt")
 
         finally:
             # with open("detections.txt", "w") as detections_file:

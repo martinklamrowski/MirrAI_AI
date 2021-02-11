@@ -68,22 +68,23 @@ def main():
                         # print("{}".format(caption))
                     # print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
                 if len(detections) == 0:
-                    print("I see a: nothing :(", file=sys.stdout)
+                    # print("I see a: nothing :(", file=sys.stdout)
+                    output = "I see a: nothing :("
                 else:
                     output = "I see a: "
                     for d in detections:
                         output += d + " "
-                    print(output, file=sys.stdout)
+                    # print(output, file=sys.stdout)
                 # fps ish
                 # elapsed_ms = time.time() - start_ms
                 # fps = 1 / elapsed_ms
                 # fps_text = "{0:.2f}ms, {1:.2f}fps".format((elapsed_ms * 1000.0), fps)
                 # print(fps_text)
 
-                # with open("detections.tmp", "w") as detections_file:
-                #     for d in detections:
-                #         detections_file.write(d + " ")
-                # os.rename("detections.tmp", "detections.txt")
+                with open("detections.tmp", "w") as detections_file:
+                    for d in detections:
+                        detections_file.write(output)
+                os.rename("detections.tmp", "detections.txt")
 
         finally:
             # with open("detections.txt", "w") as detections_file:

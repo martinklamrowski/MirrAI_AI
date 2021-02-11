@@ -83,7 +83,8 @@ def main():
 
                 with open("detections.tmp", "w") as detections_file:
                     for d in detections:
-                        detections_file.write(output)
+                        output += d + " "
+                    detections_file.write(output)
                 os.rename("detections.tmp", "detections.txt")
 
         finally:

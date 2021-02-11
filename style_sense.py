@@ -1,5 +1,6 @@
 import time
 import cv2
+import os
 
 import picamera
 from picamera.array import PiRGBArray
@@ -28,47 +29,56 @@ def main():
         # allow the camera to warmup
         time.sleep(0.1)
 
-        try:
-            for frame in camera.capture_continuous(
-                    raw_capture, format="rgb", use_video_port=True
-            ):
-                start_ms = time.time()
+        for frame in camera.capture_continuous(
+                raw_capture, format="rgb", use_video_port=True
+        ):
+            # start_ms = time.time()
 
-                raw_capture.truncate(0)
-                image = frame.array
+            raw_capture.truncate(0)
+            image = frame.array
 
-                _, scale = set_resized_input(
-                    interpreter,
-                    (cam_w, cam_h),
-                    lambda size: cv2.resize(image, size),
-                )
-                interpreter.invoke()
+            _, scale = set_resized_input(
+                interpreter,
+                (cam_w, cam_h),
+                lambda size: cv2.resize(image, size),
+            )
+            interpreter.invoke()
 
-                # get detections
-                objects = get_objects(interpreter, 0.5, scale)
+            # get detections
+            detections = set()
+            objects = get_objects(interpreter, 0.5, scale)
 
-                for obj in objects:
-                    if labels and obj.id in labels:
-                        label_name = labels[obj.id]
-                        caption = "{0}({1:.2f})".format(label_name, obj.score)
+            for obj in objects:
+                if labels and obj.id in labels:
+                    label_name = labels[obj.id]
+                    detections.add(label_name)
+                    caption = "{0}({1:.2f})".format(label_name, obj.score)
 
-                        # Draw a rectangle and caption.
-                        bbox = (
-                            obj.bbox.xmin,
-                            obj.bbox.ymin,
-                            obj.bbox.xmax,
-                            obj.bbox.ymax,
-                        )
-                        print("{} - BBox: {}".format(caption, bbox))
+                    # bbox = (
+                    #     obj.bbox.xmin,
+                    #     obj.bbox.ymin,
+                    #     obj.bbox.xmax,
+                    #     obj.bbox.ymax,
+                    # )
 
-                # fps ish
-                elapsed_ms = time.time() - start_ms
-                fps = 1 / elapsed_ms
-                fps_text = "{0:.2f}ms, {1:.2f}fps".format((elapsed_ms * 1000.0), fps)
-                print(fps_text)
+                    # print("{} - BBox: {}".format(caption, bbox))
+                    print("{}".format(caption))
+                print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 
-        finally:
-            # camera.stop_preview()
+            # fps ish
+            # elapsed_ms = time.time() - start_ms
+            # fps = 1 / elapsed_ms
+            # fps_text = "{0:.2f}ms, {1:.2f}fps".format((elapsed_ms * 1000.0), fps)
+            # print(fps_text)
+
+            with open("detections.tmp", "w") as detections_file:
+                for d in detections:
+                    detections_file.write(d + " ")
+            os.rename("detections.tmp", "detections.txt")
+            time.sleep(2)
+
+        with open("detections.txt") as _:
+            # just empty the file on quit
             pass
 
 

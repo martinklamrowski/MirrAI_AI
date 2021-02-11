@@ -1,7 +1,6 @@
 import time
 import cv2
 import os
-import sys
 
 import picamera
 from picamera.array import PiRGBArray

@@ -66,9 +66,8 @@ def main():
                         # print("{} - BBox: {}".format(caption, bbox))
                         # print("{}".format(caption))
                     # print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-                if len(detections):
-                    for d in detections:
-                        print(d, end=" ")
+                for d in detections:
+                    print(d, end=" ")
                 # fps ish
                 # elapsed_ms = time.time() - start_ms
                 # fps = 1 / elapsed_ms

@@ -1,6 +1,7 @@
 import time
 import cv2
 import os
+import sys
 
 import picamera
 from picamera.array import PiRGBArray
@@ -67,12 +68,12 @@ def main():
                         # print("{}".format(caption))
                     # print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
                 if len(detections) == 0:
-                    print("I see a: nothing :(")
+                    print("I see a: nothing :(", file=sys.stdout)
                 else:
                     output = "I see a: "
                     for d in detections:
                         output += d + " "
-                    print(output)
+                    print(output, file=sys.stdout)
                 # fps ish
                 # elapsed_ms = time.time() - start_ms
                 # fps = 1 / elapsed_ms

@@ -82,8 +82,6 @@ def main():
                 # print(fps_text)
 
                 with open("detections.tmp", "w") as detections_file:
-                    for d in detections:
-                        output += d + " "
                     detections_file.write(output)
                 os.rename("detections.tmp", "detections.txt")
 

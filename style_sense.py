@@ -71,7 +71,7 @@ def main():
                 else:
                     output = "I see a: "
                     for d in detections:
-                        output += d
+                        output += d + " "
                     print(output)
                 # fps ish
                 # elapsed_ms = time.time() - start_ms

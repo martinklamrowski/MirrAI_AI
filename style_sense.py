@@ -79,7 +79,7 @@ def main():
                 time.sleep(2)
 
         finally:
-            with open("detections.txt") as _:
+            with open("detections.txt", "w") as _:
                 # just empty the file on quit
                 pass
 

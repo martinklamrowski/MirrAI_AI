@@ -34,6 +34,7 @@ def main():
                     raw_capture, format="rgb", use_video_port=True
             ):
                 # start_ms = time.time()
+                time.sleep(2)
 
                 raw_capture.truncate(0)
                 image = frame.array
@@ -63,25 +64,25 @@ def main():
                         # )
 
                         # print("{} - BBox: {}".format(caption, bbox))
-                        print("{}".format(caption))
-                    print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-
+                        # print("{}".format(caption))
+                    # print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+                print(str(detections))
                 # fps ish
                 # elapsed_ms = time.time() - start_ms
                 # fps = 1 / elapsed_ms
                 # fps_text = "{0:.2f}ms, {1:.2f}fps".format((elapsed_ms * 1000.0), fps)
                 # print(fps_text)
 
-                with open("detections.tmp", "w") as detections_file:
-                    for d in detections:
-                        detections_file.write(d + " ")
-                os.rename("detections.tmp", "detections.txt")
-                time.sleep(2)
+                # with open("detections.tmp", "w") as detections_file:
+                #     for d in detections:
+                #         detections_file.write(d + " ")
+                # os.rename("detections.tmp", "detections.txt")
 
         finally:
-            with open("detections.txt", "w") as _:
-                # just empty the file on quit
-                pass
+            # with open("detections.txt", "w") as detections_file:
+            #     # just empty the file on quit
+            #     detections_file.write(":)")
+            pass
 
 
 if __name__ == "__main__":

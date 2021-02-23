@@ -1,0 +1,64 @@
+item { 
+	name:"suit jacket"
+	id:1
+}
+item { 
+	name:"dress shirt"
+	id:2
+}
+item { 
+	name:"pants"
+	id:3
+}
+item { 
+	name:"formal dress"
+	id:4
+}
+item { 
+	name:"casual dress"
+	id:5
+}
+item { 
+	name:"long coat"
+	id:6
+}
+item { 
+	name:"short-sleeve"
+	id:7
+}
+item { 
+	name:"long-sleeve"
+	id:8
+}
+item { 
+	name:"leggings"
+	id:9
+}
+item { 
+	name:"cardigan"
+	id:10
+}
+item { 
+	name:"shorts"
+	id:11
+}
+item { 
+	name:"winter jacket"
+	id:12
+}
+item { 
+	name:"tank-top"
+	id:13
+}
+item { 
+	name:"skirt"
+	id:14
+}
+item { 
+	name:"jean jacket"
+	id:15
+}
+item { 
+	name:"athletic pants"
+	id:16
+}

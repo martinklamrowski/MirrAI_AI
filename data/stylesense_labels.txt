@@ -1,0 +1,16 @@
+suit jacket
+dress shirt
+pants
+formal dress
+casual dress
+long coat
+short-sleeve
+long-sleeve
+leggings
+cardigan
+shorts
+winter jacket
+tank-top
+skirt
+jean jacket
+athletic pants

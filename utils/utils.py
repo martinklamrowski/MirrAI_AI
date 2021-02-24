@@ -21,8 +21,7 @@ def read_label_file(path):
             lines = label_file.readlines()
 
             for i in range(0, len(lines), 4):
-                labels_dict[
-                    int(lines[i + 2].split(":")[1].strip('\n'))] = lines[i + 1].split(":")[1].strip('"\n')
+                labels_dict[int(lines[i + 2].split(":")[1].strip('\n'))] = lines[i + 1].split(":")[1].strip('"\n')
     finally:
         labels_dict = dict()
 

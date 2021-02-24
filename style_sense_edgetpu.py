@@ -10,11 +10,12 @@ from pycoral.adapters.detect import get_objects
 from pycoral.utils.dataset import read_label_file
 from pycoral.utils.edgetpu import make_interpreter, run_inference
 
+import config.config as cfg
+
 
 def main():
-    cam_w, cam_h = 640, 480
-    default_model = "../stylesense/data/ssd_mobilenet_v2_coco_quant_postprocess_edgetpu.tflite"
-    default_labels = "../stylesense/data/coco_labels.txt"
+    default_model = "../stylesense/data/mobilenetv2_stylesense16_quant_int8_edgetpu.tflite"
+    default_labels = "../stylesense/data/stylesense_labels.txt"
 
     with picamera.PiCamera() as camera:
 
@@ -22,7 +23,7 @@ def main():
         interpreter.allocate_tensors()
         labels = read_label_file(default_labels)
 
-        camera.resolution = (cam_w, cam_h)
+        camera.resolution = (cfg.CAM_W, cfg.CAM_H)
         camera.framerate = 10
         raw_capture = PiRGBArray(camera)
 
@@ -41,7 +42,7 @@ def main():
 
                 _, scale = set_resized_input(
                     interpreter,
-                    (cam_w, cam_h),
+                    (cfg.CAM_W, cfg.CAM_H),
                     lambda size: cv2.resize(image, size),
                 )
                 interpreter.invoke()

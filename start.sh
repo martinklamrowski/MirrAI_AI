@@ -1,7 +1,7 @@
 #!/bin/sh
 cd ../MirrAI_UI/
 
-python3 ../stylesense/style_sense.py &
+python3 ../stylesense/style_sense_edgetpu.py &
 P1=$!
 npm start &
 P2=$!

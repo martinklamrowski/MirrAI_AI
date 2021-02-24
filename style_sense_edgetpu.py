@@ -82,6 +82,9 @@ def main():
                     for d in detections:
                         output += d + " "
 
+                # also testing
+                print(output)
+
                 with open("../stylesense/detections.tmp", "w") as detections_file:
                     detections_file.write(output)
                 os.rename("../stylesense/detections.tmp", "../stylesense/detections.txt")

@@ -4,4 +4,4 @@ __pycache__
 .idea
 *.json
 *.zip
-/saved_model
+data/saved_model

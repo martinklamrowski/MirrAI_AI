@@ -1,5 +1,5 @@
 #!/bin/sh
-cd ../MirrAI_UI/
+cd ../MirrAI/
 
 python3 ../stylesense/style_sense_edgetpu.py &
 P1=$!

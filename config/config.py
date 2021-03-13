@@ -8,3 +8,4 @@ BING_SUB_KEY = "70fc8781852e4d5e8db75ebea12ddba8"  # TODO : Ya we should probabl
 BING_SUB_ENDPOINT = "https://api.bing.microsoft.com/v7.0/images/search"
 
 PATH_TO_SHARED_FILES = "../shared_files/"
+PATH_TO_BING_SEARCH_IMAGES = "../MirrAI/modules/StyleVariations/images/"

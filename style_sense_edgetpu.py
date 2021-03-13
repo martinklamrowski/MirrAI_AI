@@ -25,7 +25,14 @@ args = vars(ap.parse_args())
 
 def run_bing_image_search(query):
     headers = {"Ocp-Apim-Subscription-Key": cfg.BING_SUB_KEY}
-    params = {"q": query, "license": "public", "imageType": "photo"}
+    params = {
+        "q": query,
+        "license": "all",
+        "imageType": "photo",
+        "cc": "CA",
+        "count": 35,
+        "aspect": "tall"
+    }
 
     response = requests.get(cfg.BING_SUB_ENDPOINT, headers=headers, params=params)
     response.raise_for_status()
@@ -35,7 +42,7 @@ def run_bing_image_search(query):
 
     if len(thumbnails) > 0:
         # clean the old images out of directory
-        for file in os.listdir(cfg.PATH_TO_SHARED_FILES + "images/"):
+        for file in os.listdir(cfg.PATH_TO_BING_SEARCH_IMAGES):
             os.remove(file)
 
         for i, t in enumerate(thumbnails):
@@ -43,7 +50,7 @@ def run_bing_image_search(query):
             image_data.raise_for_status()
             file_bytes = np.asarray(bytearray(BytesIO(image_data.content).read()), dtype=np.uint8)
             image = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
-            cv2.imwrite(cfg.PATH_TO_SHARED_FILES + "images/{}.jpg".format(i), image)
+            cv2.imwrite(cfg.PATH_TO_BING_SEARCH_IMAGES + "{}.jpg".format(i + 1), image)
 
 
 def generate_image_search_query(detections_set):
@@ -104,12 +111,13 @@ def main():
             for frame in camera.capture_continuous(
                     raw_capture, format="rgb", use_video_port=True
             ):
+
+                raw_capture.truncate(0)
+
+                # colours are incorrectly mapped; images are blue without this line
+                image = cv2.cvtColor(frame.array, cv2.COLOR_BGR2RGB)
+
                 if poll_trigger_file():
-                    raw_capture.truncate(0)
-
-                    # colours are incorrectly mapped; images are blue without this line
-                    image = cv2.cvtColor(frame.array, cv2.COLOR_BGR2RGB)
-
                     _, scale = set_resized_input(
                         interpreter,
                         (cfg.CAM_W, cfg.CAM_H),

@@ -81,8 +81,8 @@ def reset_trigger_file():
 
 
 def main():
-    model_path = "../stylesense/data/mobilenetv2_stylesense16_quant_int8_edgetpu.tflite"
-    labels_path = "../stylesense/data/stylesense_labels.txt"
+    model_path = "data/mobilenetv2_stylesense16_quant_int8_edgetpu.tflite"
+    labels_path = "data/stylesense_labels.txt"
 
     with picamera.PiCamera() as camera:
 

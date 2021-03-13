@@ -35,7 +35,7 @@ def run_bing_image_search(query):
 
     if len(thumbnails) > 0:
         # clean the old images out of directory
-        for file in os.listdir(cfg.PATH_TO_BING_SEARCH_RESULTS):
+        for file in os.listdir(cfg.PATH_TO_SHARED_FILES + "images/"):
             os.remove(file)
 
         for i, t in enumerate(thumbnails):
@@ -43,7 +43,7 @@ def run_bing_image_search(query):
             image_data.raise_for_status()
             file_bytes = np.asarray(bytearray(BytesIO(image_data.content).read()), dtype=np.uint8)
             image = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
-            cv2.imwrite(cfg.PATH_TO_BING_SEARCH_RESULTS + "{}.jpg".format(i), image)
+            cv2.imwrite(cfg.PATH_TO_SHARED_FILES + "images/{}.jpg".format(i), image)
 
 
 def generate_image_search_query(detections_set):
@@ -63,6 +63,21 @@ def generate_image_search_query(detections_set):
         query = ""
 
     return query
+
+
+def poll_trigger_file():
+    with open(cfg.PATH_TO_SHARED_FILES + "triggerfile.txt", "r") as trigger_file:
+        if trigger_file.read() == "TRUE":
+            return True
+
+    return False
+
+
+def reset_trigger_file():
+    with open(cfg.PATH_TO_SHARED_FILES + "triggerfile.tmp", "w") as trigger_file:
+        trigger_file.write("FALSE")
+
+    os.rename(cfg.PATH_TO_SHARED_FILES + "triggerfile.tmp", cfg.PATH_TO_SHARED_FILES + "triggerfile.txt")
 
 
 def main():
@@ -89,69 +104,71 @@ def main():
             for frame in camera.capture_continuous(
                     raw_capture, format="rgb", use_video_port=True
             ):
-                raw_capture.truncate(0)
+                if poll_trigger_file():
+                    raw_capture.truncate(0)
 
-                # colours are incorrectly mapped; images are blue without this line
-                image = cv2.cvtColor(frame.array, cv2.COLOR_BGR2RGB)
+                    # colours are incorrectly mapped; images are blue without this line
+                    image = cv2.cvtColor(frame.array, cv2.COLOR_BGR2RGB)
 
-                _, scale = set_resized_input(
-                    interpreter,
-                    (cfg.CAM_W, cfg.CAM_H),
-                    lambda size: cv2.resize(image, size),
-                )
-                interpreter.invoke()
+                    _, scale = set_resized_input(
+                        interpreter,
+                        (cfg.CAM_W, cfg.CAM_H),
+                        lambda size: cv2.resize(image, size),
+                    )
+                    interpreter.invoke()
 
-                # get detections
-                detections = set()
-                objects = get_objects(interpreter, 0.50, scale)
+                    # get detections
+                    detections = set()
+                    objects = get_objects(interpreter, 0.50, scale)
 
-                for obj in objects:
-                    if labels and obj.id in labels:
-                        label_name = labels[obj.id]
-                        detections.add(label_name)
+                    for obj in objects:
+                        if labels and obj.id in labels:
+                            label_name = labels[obj.id]
+                            detections.add(label_name)
 
-                        if args["test"]:
-                            # save images for testing
-                            # top-left corner
-                            tl_corner = (obj.bbox.xmin, obj.bbox.ymin)
+                            if args["test"]:
+                                # save images for testing
+                                # top-left corner
+                                tl_corner = (obj.bbox.xmin, obj.bbox.ymin)
 
-                            # bottom-right corner
-                            br_corner = (obj.bbox.xmax, obj.bbox.ymax)
+                                # bottom-right corner
+                                br_corner = (obj.bbox.xmax, obj.bbox.ymax)
 
-                            color = tuple(np.random.random(size=3) * 256)
-                            thickness = 2
+                                color = tuple(np.random.random(size=3) * 256)
+                                thickness = 2
 
-                            image = cv2.rectangle(image, tl_corner, br_corner, color, thickness)
-                            cv2.putText(image, "{0}({1:.2f})".format(label_name, obj.score), tl_corner,
-                                        cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 255, 255), 2, cv2.LINE_AA)
+                                image = cv2.rectangle(image, tl_corner, br_corner, color, thickness)
+                                cv2.putText(image, "{0}({1:.2f})".format(label_name, obj.score), tl_corner,
+                                            cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 255, 255), 2, cv2.LINE_AA)
 
-                            cv2.imwrite("{}{}.jpg".format(cfg.PATH_TO_TESTING_OUTPUT, counter), image)
-                            counter += 1
+                                cv2.imwrite("{}{}.jpg".format(cfg.PATH_TO_TESTING_OUTPUT, counter), image)
+                                counter += 1
 
-                if len(detections) == 0:
-                    output = "I see a: nothing :("
-                else:
-                    output = "I see a: "
-                    for d in detections:
-                        output += d + " "
+                    if len(detections) == 0:
+                        output = "I see a: nothing :("
+                    else:
+                        output = "I see a: "
+                        for d in detections:
+                            output += d + " "
 
-                if args["test"]:
-                    # also testing
-                    print(output)
+                    if args["test"]:
+                        # also testing
+                        print(output)
 
-                # for stylesense
-                with open("../stylesense/detections.tmp", "w") as detections_file:
-                    detections_file.write(output)
-                os.rename("../stylesense/detections.tmp", "../stylesense/detections.txt")
+                    # for stylesense
+                    with open(cfg.PATH_TO_SHARED_FILES + "detections.tmp", "w") as detections_file:
+                        detections_file.write(output)
+                    os.rename(cfg.PATH_TO_SHARED_FILES + "detections.tmp", cfg.PATH_TO_SHARED_FILES + "detections.txt")
 
-                # for style variations
-                query = generate_image_search_query(detections)
+                    # for style variations
+                    query = generate_image_search_query(detections)
 
-                if query != "":
-                    run_bing_image_search(query)
+                    if query != "":
+                        run_bing_image_search(query)
 
-                # TODO : Replace with read to det_trigger file.
-                time.sleep(2)
+                    # don't poll again for at least 5 seconds (no spam please!)
+                    reset_trigger_file()
+                    time.sleep(5)
 
         finally:
             pass

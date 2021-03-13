@@ -38,12 +38,14 @@ def run_bing_image_search(query):
     response.raise_for_status()
     image_results = response.json()
 
-    thumbnails = [img["thumbnailUrl"] for img in image_results["value"][:16]]
+    thumbnails = [img["thumbnailUrl"] for img in image_results["value"][:35]]
 
     if len(thumbnails) > 0:
         # clean the old images out of directory
         for file in os.listdir(cfg.PATH_TO_BING_SEARCH_IMAGES):
             os.remove(cfg.PATH_TO_BING_SEARCH_IMAGES + file)
+            # TODO : REMOVE.
+            print("\n PYTHON : DELETED {}".format(cfg.PATH_TO_BING_SEARCH_IMAGES + file))
 
         for i, t in enumerate(thumbnails):
             image_data = requests.get(t)
@@ -62,14 +64,17 @@ def generate_image_search_query(detections_set):
                            "tank-top", "shorts", "athletic pants"}
 
     if man:
-        query = "men outfit "
+        query = "mens "
         for det in detections_set:
             if det in relevant_detections:
-                query += det + " "
+                if det == "short-sleeve":
+                    query += "t-shirt "
+                else:
+                    query += det + " "
     else:
         query = ""
 
-    return query
+    return query if query == "" else query + "outfits"
 
 
 def poll_trigger_file():

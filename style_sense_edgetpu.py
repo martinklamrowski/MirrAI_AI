@@ -43,7 +43,7 @@ def run_bing_image_search(query):
     if len(thumbnails) > 0:
         # clean the old images out of directory
         for file in os.listdir(cfg.PATH_TO_BING_SEARCH_IMAGES):
-            os.remove(file)
+            os.remove(file + cfg.PATH_TO_BING_SEARCH_IMAGES)
 
         for i, t in enumerate(thumbnails):
             image_data = requests.get(t)

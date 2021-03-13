@@ -64,6 +64,10 @@ def run_bing_image_search(query):
     thumbnails = [img["thumbnailUrl"] for img in image_results["value"][:35]]
     total_matches_for_previous_query = image_results["totalEstimatedMatches"]
 
+    # TODO : REMOVE.
+    with open("../websearchurl.txt", "w") as url_file:
+        url_file.write(image_results["webSearchUrl"])
+
     if len(thumbnails) > 0:
         for i, t in enumerate(thumbnails):
             image_data = requests.get(t)
@@ -82,7 +86,7 @@ def generate_image_search_query(detections_set):
                            "tank-top", "shorts", "athletic pants"}
 
     if man:
-        query = "mens "
+        query = "mens outfits with "
         for det in detections_set:
             if det in relevant_detections:
                 if det == "short-sleeve":
@@ -92,7 +96,7 @@ def generate_image_search_query(detections_set):
     else:
         query = ""
 
-    return query if query == "" else query + "outfits"
+    return query
 
 
 def poll_trigger_file():

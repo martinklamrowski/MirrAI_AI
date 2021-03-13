@@ -22,31 +22,49 @@ ap = argparse.ArgumentParser()
 ap.add_argument("-t", "--test", required=False, action="store_true", help="If set detections will be saved.")
 args = vars(ap.parse_args())
 
+previous_query = ""
+offset_count = 0
+total_matches_for_previous_query = -1
+
 
 def run_bing_image_search(query):
     headers = {"Ocp-Apim-Subscription-Key": cfg.BING_SUB_KEY}
+
+    global previous_query
+    global offset_count
+    global total_matches_for_previous_query
+
+    if previous_query == query:
+        offset_count += 1
+    else:
+        offset_count = 0
+        total_matches_for_previous_query = -1
+
     params = {
         "q": query,
         "license": "all",
         "imageType": "photo",
         "cc": "CA",
         "count": 35,
-        "aspect": "tall"
+        "aspect": "tall",
+        "offset": offset_count * 35 if offset_count * 35 < total_matches_for_previous_query else 0
     }
+
+    # clean the old images out of directory
+    for file in os.listdir(cfg.PATH_TO_BING_SEARCH_IMAGES):
+        if file != "refresh.png":
+            os.remove(cfg.PATH_TO_BING_SEARCH_IMAGES + file)
+        # TODO : REMOVE.
+        print("\n PYTHON : DELETED {}".format(cfg.PATH_TO_BING_SEARCH_IMAGES + file))
 
     response = requests.get(cfg.BING_SUB_ENDPOINT, headers=headers, params=params)
     response.raise_for_status()
     image_results = response.json()
 
     thumbnails = [img["thumbnailUrl"] for img in image_results["value"][:35]]
+    total_matches_for_previous_query = image_results["totalEstimatedMatches"]
 
     if len(thumbnails) > 0:
-        # clean the old images out of directory
-        for file in os.listdir(cfg.PATH_TO_BING_SEARCH_IMAGES):
-            os.remove(cfg.PATH_TO_BING_SEARCH_IMAGES + file)
-            # TODO : REMOVE.
-            print("\n PYTHON : DELETED {}".format(cfg.PATH_TO_BING_SEARCH_IMAGES + file))
-
         for i, t in enumerate(thumbnails):
             image_data = requests.get(t)
             image_data.raise_for_status()

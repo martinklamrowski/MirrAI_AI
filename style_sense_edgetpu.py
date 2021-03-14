@@ -45,9 +45,9 @@ def run_bing_image_search(query):
         "license": "all",
         "imageType": "photo",
         "cc": "CA",
-        "count": 32,
+        "count": 24,
         "aspect": "tall",
-        "offset": offset_count * 32 if offset_count * 32 < total_matches_for_previous_query else 0
+        "offset": offset_count * 24 if offset_count * 24 < total_matches_for_previous_query else 0
     }
 
     response = requests.get(cfg.BING_SUB_ENDPOINT, headers=headers, params=params)
@@ -76,19 +76,21 @@ def generate_image_search_query(detections_set):
     # TODO : Clean this up damn.
     relevant_detections = {"suit jacket", "dress shirt", "long-sleeve", "long coat",
                            "cardigan", "short-sleeve", "jean jacket", "winter jacket",
-                           "tank-top", "shorts", "athletic pants"}
-
+                           "tank-top", "shorts", "athletic pants", "pants"}
+    query = ""
     if man:
         query = "mens outfits with "
         for det in detections_set:
             if det in relevant_detections:
                 if det == "short-sleeve":
                     query += "t-shirt "
+                elif det == "dress shirt":
+                    return "mens outfits with dress shirt"
                 else:
                     query += det + " "
-    else:
-        query = ""
 
+    if query == "mens outfits with ":
+        return ""
     return query
 
 

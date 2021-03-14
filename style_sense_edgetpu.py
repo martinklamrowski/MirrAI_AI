@@ -45,17 +45,10 @@ def run_bing_image_search(query):
         "license": "all",
         "imageType": "photo",
         "cc": "CA",
-        "count": 35,
+        "count": 32,
         "aspect": "tall",
-        "offset": offset_count * 35 if offset_count * 35 < total_matches_for_previous_query else 0
+        "offset": offset_count * 32 if offset_count * 32 < total_matches_for_previous_query else 0
     }
-
-    # clean the old images out of directory
-    for file in os.listdir(cfg.PATH_TO_BING_SEARCH_IMAGES):
-        if file != "refresh.png":
-            os.remove(cfg.PATH_TO_BING_SEARCH_IMAGES + file)
-        # TODO : REMOVE.
-        print("\n PYTHON : DELETED {}".format(cfg.PATH_TO_BING_SEARCH_IMAGES + file))
 
     response = requests.get(cfg.BING_SUB_ENDPOINT, headers=headers, params=params)
     response.raise_for_status()

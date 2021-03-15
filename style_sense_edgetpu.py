@@ -67,7 +67,7 @@ def run_bing_image_search(query):
             image_data.raise_for_status()
             file_bytes = np.asarray(bytearray(BytesIO(image_data.content).read()), dtype=np.uint8)
             image = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
-            cv2.imwrite(cfg.PATH_TO_BING_SEARCH_IMAGES + "{}.jpg".format(i + 1), image)
+            cv2.imwrite(cfg.PATH_TO_INSPIRATIONS_IMAGES + "{}.jpg".format(i + 1), image)
 
 
 def generate_image_search_query(detections_set):
@@ -110,8 +110,8 @@ def reset_trigger_file():
 
 
 def main():
-    model_path = "../stylesense/data/mobilenetv2_stylesense16_quant_int8_edgetpu.tflite"
-    labels_path = "../stylesense/data/stylesense_labels.txt"
+    model_path = cfg.PATH_TO_STYLESENSE_MODEL
+    labels_path = cfg.PATH_TO_STYLESENSE_LABELS
 
     with picamera.PiCamera() as camera:
 

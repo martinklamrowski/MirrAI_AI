@@ -27,6 +27,44 @@ offset_count = 0
 total_matches_for_previous_query = -1
 
 
+def run_bing_visual_search(image_path):
+    endpoint = cfg.BING_VISUAL_ENDPOINT
+    headers = {"Ocp-Apim-Subscription-Key": cfg.BING_SUB_KEY}
+    file = {"image": ("myfile", open(image_path, "rb"))}
+
+    response = requests.post(endpoint, headers=headers, files=file)
+    response.raise_for_status()
+
+    results = response.json()
+
+    tags = results["tags"]
+
+    # this is some deep ass json
+    for i in range(len(tags)):
+        tag = tags[i]
+        actions = tag["actions"]
+
+        for j in range(len(actions)):
+            action = actions[j]
+            if action["actionType"] == "VisualSearch":
+                data = action["data"]
+                num_items = data["totalEstimatedMatches"]
+                items = data["value"]
+
+                # for k in range(num_items): # there are alot of items; lets just take 24 for now
+                for k in range(24):
+                    # phew
+                    thumbnail_url = items[k]["thumbnailUrl"]
+                    image_data = requests.get(thumbnail_url)
+                    image_data.raise_for_status()
+
+                    file_bytes = np.asarray(bytearray(BytesIO(image_data.content).read()), dtype=np.uint8)
+                    image = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
+                    cv2.imwrite(cfg.PATH_TO_VARIATIONS_IMAGES + "{}.jpg".format(i + 1), image)
+                break
+        break
+
+
 def run_bing_image_search(query):
     headers = {"Ocp-Apim-Subscription-Key": cfg.BING_SUB_KEY}
 
@@ -50,7 +88,7 @@ def run_bing_image_search(query):
         "offset": offset_count * 24 if offset_count * 24 < total_matches_for_previous_query else 0
     }
 
-    response = requests.get(cfg.BING_SUB_ENDPOINT, headers=headers, params=params)
+    response = requests.get(cfg.BING_IMAGE_ENDPOINT, headers=headers, params=params)
     response.raise_for_status()
     image_results = response.json()
 
@@ -94,19 +132,34 @@ def generate_image_search_query(detections_set):
     return query
 
 
-def poll_trigger_file():
-    with open(cfg.PATH_TO_SHARED_FILES + "triggerfile.txt", "r") as trigger_file:
+def poll_inspirations_trigger_file():
+    with open(cfg.PATH_TO_SHARED_FILES + "inspirationsTriggerFile.txt", "r") as trigger_file:
         if trigger_file.read() == "TRUE":
             return True
 
     return False
 
 
-def reset_trigger_file():
-    with open(cfg.PATH_TO_SHARED_FILES + "triggerfile.tmp", "w") as trigger_file:
+def reset_inspirations_trigger_file():
+    with open(cfg.PATH_TO_SHARED_FILES + "inspirationsTriggerFile.tmp", "w") as trigger_file:
         trigger_file.write("FALSE")
 
-    os.rename(cfg.PATH_TO_SHARED_FILES + "triggerfile.tmp", cfg.PATH_TO_SHARED_FILES + "triggerfile.txt")
+    os.rename(cfg.PATH_TO_SHARED_FILES + "inspirationsTriggerFile.tmp", cfg.PATH_TO_SHARED_FILES + "inspirationsTriggerFile.txt")
+
+
+def poll_variations_trigger_file():
+    with open(cfg.PATH_TO_SHARED_FILES + "variationsTriggerFile.txt", "r") as trigger_file:
+        if trigger_file.read() == "TRUE":
+            return True
+
+    return False
+
+
+def reset_variations_trigger_file():
+    with open(cfg.PATH_TO_SHARED_FILES + "variationsTriggerFile.tmp", "w") as trigger_file:
+        trigger_file.write("FALSE")
+
+    os.rename(cfg.PATH_TO_SHARED_FILES + "variationsTriggerFile.tmp", cfg.PATH_TO_SHARED_FILES + "variationsTriggerFile.txt")
 
 
 def main():
@@ -139,7 +192,7 @@ def main():
                 # colours are incorrectly mapped; images are blue without this line
                 image = cv2.cvtColor(frame.array, cv2.COLOR_BGR2RGB)
 
-                if poll_trigger_file():
+                if poll_inspirations_trigger_file():
                     _, scale = set_resized_input(
                         interpreter,
                         (cfg.CAM_W, cfg.CAM_H),
@@ -197,7 +250,15 @@ def main():
                         run_bing_image_search(query)
 
                     # don't poll again for at least 5 seconds (no spam please!)
-                    reset_trigger_file()
+                    reset_inspirations_trigger_file()
+                    time.sleep(5)
+
+                if poll_variations_trigger_file():
+                    image_path = "visual_search_image.jpg".format(cfg.PATH_TO_SHARED_FILES)
+                    cv2.imwrite(image_path, image)
+
+                    run_bing_visual_search(image_path)
+                    reset_variations_trigger_file()
                     time.sleep(5)
 
         finally:

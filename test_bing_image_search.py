@@ -18,21 +18,21 @@ while True:
             "license": "all",
             "imageType": "photo",
             "cc": "CA",
-            "count": 32,
+            "count": 24,
             "aspect": "tall",
-            "offset": offset_count * 32 if offset_count * 32 < total_matches_for_previous_query else 0
+            "offset": offset_count * 24 if offset_count * 24 < total_matches_for_previous_query else 0
         }
 
     response = requests.get(SUB_ENDPOINT, headers=headers, params=params)
     response.raise_for_status()
     image_results = response.json()
 
-    thumbnails = [img["thumbnailUrl"] for img in image_results["value"][:32]]
+    thumbnails = [img["thumbnailUrl"] for img in image_results["value"][:24]]
 
-    f, axes = plt.subplots(4, 8)
-    for i in range(4):
+    f, axes = plt.subplots(3, 8)
+    for i in range(3):
         for j in range(8):
-            image_data = requests.get(thumbnails[i + 4 * j])
+            image_data = requests.get(thumbnails[i + 3 * j])
             image_data.raise_for_status()
             image = Image.open(BytesIO(image_data.content))
             axes[i][j].imshow(image)

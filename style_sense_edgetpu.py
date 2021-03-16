@@ -60,7 +60,7 @@ def run_bing_visual_search(image_path):
 
                     file_bytes = np.asarray(bytearray(BytesIO(image_data.content).read()), dtype=np.uint8)
                     image = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
-                    cv2.imwrite(cfg.PATH_TO_VARIATIONS_IMAGES + "{}.jpg".format(i + 1), image)
+                    cv2.imwrite(cfg.PATH_TO_VARIATIONS_IMAGES + "{}.jpg".format(k + 1), image)
                 break
         break
 
@@ -92,7 +92,7 @@ def run_bing_image_search(query):
     response.raise_for_status()
     image_results = response.json()
 
-    thumbnails = [img["thumbnailUrl"] for img in image_results["value"][:35]]
+    thumbnails = [img["thumbnailUrl"] for img in image_results["value"][:24]]
     total_matches_for_previous_query = image_results["totalEstimatedMatches"]
 
     # TODO : REMOVE.
@@ -251,15 +251,15 @@ def main():
 
                     # don't poll again for at least 5 seconds (no spam please!)
                     reset_inspirations_trigger_file()
-                    time.sleep(5)
+                    time.sleep(3)
 
                 if poll_variations_trigger_file():
-                    image_path = "visual_search_image.jpg".format(cfg.PATH_TO_SHARED_FILES)
+                    image_path = "{}visual_search_image.jpg".format(cfg.PATH_TO_SHARED_FILES)
                     cv2.imwrite(image_path, image)
 
                     run_bing_visual_search(image_path)
                     reset_variations_trigger_file()
-                    time.sleep(5)
+                    time.sleep(3)
 
         finally:
             pass

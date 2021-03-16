@@ -4,6 +4,7 @@ import os
 import argparse
 import requests
 from io import BytesIO
+from random import randint
 
 import picamera
 from picamera.array import PiRGBArray
@@ -60,7 +61,7 @@ def run_bing_visual_search(image_path):
 
                     file_bytes = np.asarray(bytearray(BytesIO(image_data.content).read()), dtype=np.uint8)
                     image = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
-                    cv2.imwrite(cfg.PATH_TO_VARIATIONS_IMAGES + "{}.jpg".format(k + 1), image)
+                    cv2.imwrite(cfg.PATH_TO_VARIATIONS_IMAGES + "{}.jpg".format(randint(10000000, 99999999)), image)
                 break
         break
 
@@ -105,7 +106,7 @@ def run_bing_image_search(query):
             image_data.raise_for_status()
             file_bytes = np.asarray(bytearray(BytesIO(image_data.content).read()), dtype=np.uint8)
             image = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
-            cv2.imwrite(cfg.PATH_TO_INSPIRATIONS_IMAGES + "{}.jpg".format(i + 1), image)
+            cv2.imwrite(cfg.PATH_TO_INSPIRATIONS_IMAGES + "{}.jpg".format(randint(10000000, 99999999)), image)
 
 
 def generate_image_search_query(detections_set):
@@ -179,6 +180,9 @@ def main():
         # image counter for testing
         counter = 0
 
+        # get more recent picture
+        polled_once = False
+
         # allow the camera to warmup
         time.sleep(1)
 
@@ -186,13 +190,18 @@ def main():
             for frame in camera.capture_continuous(
                     raw_capture, format="rgb", use_video_port=True
             ):
-
                 raw_capture.truncate(0)
 
                 # colours are incorrectly mapped; images are blue without this line
                 image = cv2.cvtColor(frame.array, cv2.COLOR_BGR2RGB)
 
-                if poll_inspirations_trigger_file():
+                if (poll_inspirations_trigger_file() or poll_variations_trigger_file()) and not polled_once:
+                    # get more recent photo if there is a trigger
+                    time.sleep(1)
+                    polled_once = True
+                    continue
+
+                if poll_inspirations_trigger_file() and polled_once:
                     _, scale = set_resized_input(
                         interpreter,
                         (cfg.CAM_W, cfg.CAM_H),
@@ -251,15 +260,17 @@ def main():
 
                     # don't poll again for at least 5 seconds (no spam please!)
                     reset_inspirations_trigger_file()
-                    time.sleep(3)
+                    polled_once = False
+                    time.sleep(2)
 
-                if poll_variations_trigger_file():
+                if poll_variations_trigger_file() and polled_once:
                     image_path = "{}visual_search_image.jpg".format(cfg.PATH_TO_SHARED_FILES)
                     cv2.imwrite(image_path, image)
 
                     run_bing_visual_search(image_path)
                     reset_variations_trigger_file()
-                    time.sleep(3)
+                    polled_once = False
+                    time.sleep(2)
 
         finally:
             pass

@@ -260,7 +260,7 @@ def main():
 
                     # don't poll again for at least 5 seconds (no spam please!)
                     reset_inspirations_trigger_file()
-                    polled_once = False
+                    update_polled_once = True
                     time.sleep(2)
 
                 if poll_variations_trigger_file() and polled_once:
@@ -269,8 +269,11 @@ def main():
 
                     run_bing_visual_search(image_path)
                     reset_variations_trigger_file()
-                    polled_once = False
+                    update_polled_once = True
                     time.sleep(2)
+
+                if update_polled_once:
+                    polled_once = False
 
         finally:
             pass

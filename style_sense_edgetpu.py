@@ -182,6 +182,7 @@ def main():
 
         # get more recent picture
         polled_once = False
+        update_polled_once = False
 
         # allow the camera to warmup
         time.sleep(1)
@@ -273,6 +274,7 @@ def main():
                     time.sleep(2)
 
                 if update_polled_once:
+                    update_polled_once = False
                     polled_once = False
 
         finally:
